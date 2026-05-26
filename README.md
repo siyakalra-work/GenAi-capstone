@@ -50,6 +50,7 @@ RAG storage is stubbed behind `backend/app/services/rag/qdrant_client.py` and us
 ### Requirements
 
 - Python 3.11+
+- If you use Python 3.12/3.13, ensure `greenlet` is installed (it’s included in backend deps).
 - Node 20+
 - PostgreSQL 16+ running locally (DB `stockpilot`, user `postgres`, password `postgres`)
 - (Optional) Qdrant running locally at `http://localhost:6333` if you want vector search later
