@@ -14,7 +14,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "rounded-lg px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50",
+        "rounded-xl px-3 py-2 text-sm border border-slate-200/70 dark:border-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-white/5 disabled:opacity-50 transition",
         className,
       )}
     >
@@ -22,4 +22,3 @@ export function Button({
     </button>
   );
 }
-

@@ -6,10 +6,9 @@ export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={clsx(
-        "w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400",
+        "w-full rounded-xl border border-slate-200/70 dark:border-slate-800/60 bg-white/70 dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40 focus:border-indigo-400/40 backdrop-blur",
         props.className,
       )}
     />
   );
 }
-
