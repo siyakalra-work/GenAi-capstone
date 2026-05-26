@@ -11,9 +11,9 @@ export function AppLayout() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.55),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.06),rgba(255,255,255,0))]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1280px] px-4 py-6">
-        <div className="glass rounded-[28px] shadow-[0_40px_120px_-70px_rgba(0,0,0,0.7)] overflow-hidden">
-          <div className="flex min-h-[calc(100vh-3rem)]">
+      <div className="relative w-full">
+        <div className="glass w-full min-h-screen shadow-[0_40px_120px_-70px_rgba(0,0,0,0.7)] overflow-hidden">
+          <div className="flex min-h-screen">
             <Sidebar />
             <div className="flex-1 min-w-0">
               <Topbar />
