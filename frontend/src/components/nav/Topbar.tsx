@@ -21,9 +21,8 @@ export function Topbar() {
   }
 
   return (
-    <header className="sticky top-0 z-10">
-      <div className="mx-auto w-full max-w-6xl px-6 pt-4">
-        <div className="glass rounded-2xl h-14 flex items-center justify-between px-4 shadow-[0_20px_60px_-35px_rgba(0,0,0,0.55)]">
+    <header className="sticky top-0 z-10 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/40 dark:bg-[#070A12]/40 backdrop-blur-xl">
+      <div className="h-14 flex items-center justify-between px-5">
           <div className="flex items-center gap-3 min-w-0">
             <div className="text-sm text-muted hidden sm:block">Inventory Intelligence Platform</div>
             <div className="hidden md:flex items-center gap-2 rounded-xl px-3 py-2 bg-slate-100/70 dark:bg-white/5 border border-slate-200/70 dark:border-slate-800/60">
@@ -46,7 +45,6 @@ export function Topbar() {
           Logout
         </button>
       </div>
-        </div>
       </div>
     </header>
   );

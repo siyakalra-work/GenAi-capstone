@@ -13,8 +13,8 @@ const nav = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden md:flex md:w-72 md:flex-col p-4">
-      <div className="glass rounded-2xl h-full overflow-hidden shadow-[0_20px_60px_-30px_rgba(0,0,0,0.45)]">
+    <aside className="hidden md:flex md:w-72 md:flex-col border-r border-slate-200/60 dark:border-slate-800/60">
+      <div className="h-full overflow-hidden">
         <div className="p-5 border-b border-slate-200/60 dark:border-slate-800/60">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-[0_10px_30px_-15px_rgba(99,102,241,0.9)]" />
