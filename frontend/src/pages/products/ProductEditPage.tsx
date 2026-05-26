@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { api } from "../../services/api";
 import { Button } from "../../components/ui/Button";
@@ -11,21 +10,23 @@ export function ProductEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-
-  const q = useQuery({
-    queryKey: ["product", id],
-    queryFn: async () => (await api.get(`/products/${id}`)).data as any,
-    enabled: !!id,
-  });
-
   const [form, setForm] = useState<any>(null);
-  if (q.data && !form) setForm({ ...q.data, price: q.data.price ?? "" });
+  const [loading, setLoading] = useState(false);
 
-  const m = useMutation({
-    mutationFn: async () => (await api.put(`/products/${id}`, { product_name: form.product_name, price: form.price ? Number(form.price) : null })).data,
-    onSuccess: () => navigate("/products"),
-    onError: (e: any) => setError(e?.response?.data?.detail ?? "Update failed"),
-  });
+  useEffect(() => {
+    if (!id) return;
+    let alive = true;
+    api
+      .get(`/products/${id}`)
+      .then((r) => {
+        if (!alive) return;
+        setForm({ ...r.data, price: r.data.price ?? "" });
+      })
+      .catch((e: any) => setError(e?.response?.data?.detail ?? "Load failed"));
+    return () => {
+      alive = false;
+    };
+  }, [id]);
 
   if (!form) return <div>Loading...</div>;
 
@@ -38,18 +39,22 @@ export function ProductEditPage() {
           onSubmit={(e) => {
             e.preventDefault();
             setError(null);
-            m.mutate();
+            setLoading(true);
+            api
+              .put(`/products/${id}`, { product_name: form.product_name, price: form.price ? Number(form.price) : null })
+              .then(() => navigate("/products"))
+              .catch((err: any) => setError(err?.response?.data?.detail ?? "Update failed"))
+              .finally(() => setLoading(false));
           }}
         >
           <Input placeholder="Product name" value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} />
           <Input placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           {error ? <div className="text-sm text-red-500">{error}</div> : null}
-          <Button type="submit" className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" disabled={m.isPending}>
-            {m.isPending ? "Saving..." : "Save"}
+          <Button type="submit" className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" disabled={loading}>
+            {loading ? "Saving..." : "Save"}
           </Button>
         </form>
       </Card>
     </div>
   );
 }
-

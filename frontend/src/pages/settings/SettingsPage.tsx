@@ -1,12 +1,11 @@
-import { useAuthStore } from "../../store/authStore";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { useState } from "react";
+import { useAuth } from "../../store/auth";
 
 export function SettingsPage() {
-  const tenantId = useAuthStore((s) => s.tenantId);
-  const setTenant = useAuthStore((s) => s.setTenant);
+  const { tenantId, setTenant } = useAuth();
   const [v, setV] = useState(tenantId ?? "");
   return (
     <div className="space-y-4">
@@ -21,4 +20,3 @@ export function SettingsPage() {
     </div>
   );
 }
-

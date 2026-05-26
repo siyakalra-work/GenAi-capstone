@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { api } from "../../services/api";
 import { Button } from "../../components/ui/Button";
@@ -10,10 +9,26 @@ import { Card } from "../../components/ui/Card";
 export function ProductsListPage() {
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
-  const data = useQuery({
-    queryKey: ["products", { q, page }],
-    queryFn: async () => (await api.get("/products", { params: { q, page, page_size: 20 } })).data as any,
-  });
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    api
+      .get("/products", { params: { q, page, page_size: 20 } })
+      .then((r) => {
+        if (!alive) return;
+        setData(r.data);
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [q, page]);
 
   return (
     <div className="space-y-4">
@@ -28,6 +43,7 @@ export function ProductsListPage() {
           <Input placeholder="Search name/SKU" value={q} onChange={(e) => setQ(e.target.value)} />
           <Button onClick={() => setPage(1)}>Search</Button>
         </div>
+        {loading ? <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Loading...</div> : null}
         <div className="overflow-auto">
           <table className="w-full text-sm">
             <thead className="text-left text-slate-500 dark:text-slate-400">
@@ -40,7 +56,7 @@ export function ProductsListPage() {
               </tr>
             </thead>
             <tbody>
-              {(data.data?.items ?? []).map((p: any) => (
+              {(data?.items ?? []).map((p: any) => (
                 <tr key={p.id} className="border-t border-slate-200 dark:border-slate-800">
                   <td className="py-2">{p.sku}</td>
                   <td>{p.product_name}</td>
@@ -58,7 +74,7 @@ export function ProductsListPage() {
         </div>
         <div className="flex items-center justify-between mt-3">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            Total: {data.data?.meta?.total ?? "—"}
+            Total: {data?.meta?.total ?? "—"}
           </div>
           <div className="flex gap-2">
             <Button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
@@ -71,4 +87,3 @@ export function ProductsListPage() {
     </div>
   );
 }
-

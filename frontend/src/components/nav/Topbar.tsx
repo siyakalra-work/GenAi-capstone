@@ -1,10 +1,10 @@
 import { Moon, Sun, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useAuthStore } from "../../store/authStore";
+import { useAuth } from "../../store/auth";
 
 export function Topbar() {
-  const logout = useAuthStore((s) => s.logout);
+  const { logout } = useAuth();
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -38,4 +38,3 @@ export function Topbar() {
     </header>
   );
 }
-

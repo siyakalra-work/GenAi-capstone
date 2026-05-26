@@ -1,13 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-
 import { api } from "../../services/api";
 import { Card } from "../../components/ui/Card";
+import { useEffect, useState } from "react";
 
 export function DashboardPage() {
-  const products = useQuery({
-    queryKey: ["products", "dashboard"],
-    queryFn: async () => (await api.get("/products?page=1&page_size=1")).data as any,
-  });
+  const [total, setTotal] = useState<number | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    api
+      .get("/products", { params: { page: 1, page_size: 1 } })
+      .then((r) => {
+        if (!alive) return;
+        setTotal(r.data?.meta?.total ?? null);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setTotal(null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -15,7 +28,7 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <div className="text-sm text-slate-500 dark:text-slate-400">Total Products</div>
-          <div className="text-2xl font-semibold">{products.data?.meta?.total ?? "—"}</div>
+          <div className="text-2xl font-semibold">{total ?? "—"}</div>
         </Card>
         <Card>
           <div className="text-sm text-slate-500 dark:text-slate-400">Low Stock</div>
@@ -30,4 +43,3 @@ export function DashboardPage() {
     </div>
   );
 }
-

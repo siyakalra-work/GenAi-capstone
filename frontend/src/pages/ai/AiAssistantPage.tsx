@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { api } from "../../services/api";
@@ -9,10 +8,17 @@ import { Input } from "../../components/ui/Input";
 export function AiAssistantPage() {
   const [message, setMessage] = useState("Which products are running low?");
   const [answer, setAnswer] = useState<string>("");
-  const m = useMutation({
-    mutationFn: async () => (await api.post("/ai/chat", { message })).data as { answer: string },
-    onSuccess: (d) => setAnswer(d.answer),
-  });
+  const [loading, setLoading] = useState(false);
+
+  async function ask() {
+    setLoading(true);
+    try {
+      const d = (await api.post("/ai/chat", { message })).data as { answer: string };
+      setAnswer(d.answer);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -20,7 +26,7 @@ export function AiAssistantPage() {
       <Card>
         <div className="flex gap-2">
           <Input value={message} onChange={(e) => setMessage(e.target.value)} />
-          <Button className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" onClick={() => m.mutate()} disabled={m.isPending}>
+          <Button className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" onClick={ask} disabled={loading}>
             Ask
           </Button>
         </div>
@@ -29,4 +35,3 @@ export function AiAssistantPage() {
     </div>
   );
 }
-
