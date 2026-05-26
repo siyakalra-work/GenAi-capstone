@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     api_port: int = Field(default=8000)
 
     database_url: str = Field(default="postgresql+asyncpg://postgres:postgres@db:5432/stockpilot")
-    redis_url: str = Field(default="redis://redis:6379/0")
+    # Optional. If unset/empty, rate limiting falls back to in-process memory.
+    redis_url: str = Field(default="")
 
     jwt_secret_key: str = Field(default="CHANGE_ME")
     jwt_algorithm: str = Field(default="HS256")
@@ -31,4 +32,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

@@ -45,3 +45,30 @@ This repo includes a provider abstraction in `backend/app/services/ai/provider.p
 
 RAG storage is stubbed behind `backend/app/services/rag/qdrant_client.py` and uses per-tenant collection names.
 
+## Local run (no Docker, no Redis)
+
+### Requirements
+
+- Python 3.11+
+- Node 20+
+- PostgreSQL 16+ running locally (DB `stockpilot`, user `postgres`, password `postgres`)
+- (Optional) Qdrant running locally at `http://localhost:6333` if you want vector search later
+
+### Backend
+
+From repo root:
+
+- `cd backend`
+- `python3 -m venv .venv && source .venv/bin/activate`
+- `python -m pip install -U pip setuptools wheel`
+- `python -m pip install .` (or `python -m pip install -e .`)
+- Ensure `backend/.env` uses `localhost` for Postgres and has `REDIS_URL=` (empty)
+- `alembic upgrade head`
+- `python -m app.scripts.seed`
+- `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+
+### Frontend
+
+- `cd frontend`
+- `npm install`
+- `npm run dev`
