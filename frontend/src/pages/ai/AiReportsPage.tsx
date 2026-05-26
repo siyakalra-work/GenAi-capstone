@@ -2,8 +2,9 @@ import { useState } from "react";
 
 import { api } from "../../services/api";
 import { Button } from "../../components/ui/Button";
-import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Panel } from "../../components/ui/Panel";
 
 export function AiReportsPage() {
   const [query, setQuery] = useState("Show laptops under ₹50000.");
@@ -31,20 +32,28 @@ export function AiReportsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="text-xl font-semibold">AI Reports</div>
-      <Card>
-        <div className="flex gap-2">
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} />
+    <div className="space-y-5">
+      <PageHeader title="AI Reports" subtitle="Natural language search and executive summaries" />
+      <Panel>
+        <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex-1">
+            <Input value={query} onChange={(e) => setQuery(e.target.value)} />
+          </div>
           <Button onClick={runSearch} disabled={loading}>
             Search
           </Button>
-          <Button className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" onClick={runSummary} disabled={loading}>
+          <Button
+            className="bg-slate-900 text-white dark:bg-white/10 dark:text-white border-slate-900/20 dark:border-white/10"
+            onClick={runSummary}
+            disabled={loading}
+          >
             Summary
           </Button>
         </div>
-        <pre className="mt-4 text-xs whitespace-pre-wrap">{out || "—"}</pre>
-      </Card>
+        <div className="mt-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 bg-white/40 dark:bg-white/5 p-4">
+          <pre className="text-xs whitespace-pre-wrap text-slate-900 dark:text-slate-50">{out || "—"}</pre>
+        </div>
+      </Panel>
     </div>
   );
 }

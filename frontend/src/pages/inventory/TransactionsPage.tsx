@@ -1,8 +1,11 @@
 import { api } from "../../services/api";
-import { Card } from "../../components/ui/Card";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { useEffect, useState } from "react";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Panel } from "../../components/ui/Panel";
+import { Table, TD, TH, THead, TR } from "../../components/ui/Table";
+import { Badge } from "../../components/ui/Badge";
 
 export function TransactionsPage() {
   const [rows, setRows] = useState<any[]>([]);
@@ -26,38 +29,65 @@ export function TransactionsPage() {
     };
   }, []);
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="text-xl font-semibold">Transactions</div>
-        <div className="flex gap-2">
-          <Link to="/inventory/stock-in"><Button>Stock In</Button></Link>
-          <Link to="/inventory/stock-out"><Button>Stock Out</Button></Link>
-          <Link to="/inventory/adjustment"><Button>Adjustment</Button></Link>
-        </div>
-      </div>
-      <Card>
-        {loading ? <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Loading...</div> : null}
-        <table className="w-full text-sm">
-          <thead className="text-left text-slate-500 dark:text-slate-400">
+    <div className="space-y-5">
+      <PageHeader
+        title="Transactions"
+        subtitle="Audit inventory stock movements"
+        right={
+          <>
+            <Link to="/inventory/stock-in">
+              <Button>Stock In</Button>
+            </Link>
+            <Link to="/inventory/stock-out">
+              <Button>Stock Out</Button>
+            </Link>
+            <Link to="/inventory/adjustment">
+              <Button className="bg-slate-900 text-white dark:bg-white/10 dark:text-white border-slate-900/20 dark:border-white/10">
+                Adjustment
+              </Button>
+            </Link>
+          </>
+        }
+      />
+
+      <Panel>
+        {loading ? <div className="text-sm text-muted mb-2">Loading…</div> : null}
+        <Table>
+          <THead>
             <tr>
-              <th className="py-2">Type</th>
-              <th>Product</th>
-              <th>Qty</th>
-              <th>Notes</th>
+              <TH>Type</TH>
+              <TH>Product</TH>
+              <TH>Notes</TH>
+              <TH className="text-right">Qty</TH>
             </tr>
-          </thead>
+          </THead>
           <tbody>
-            {rows.map((t) => (
-              <tr key={t.id} className="border-t border-slate-200 dark:border-slate-800">
-                <td className="py-2">{t.transaction_type}</td>
-                <td>{t.product_id}</td>
-                <td>{t.quantity}</td>
-                <td>{t.notes ?? "—"}</td>
-              </tr>
-            ))}
+            {rows.length ? (
+              rows.map((t) => (
+                <TR key={t.id}>
+                  <TD>
+                    <Badge tone={t.transaction_type === "in" ? "good" : t.transaction_type === "out" ? "info" : "neutral"}>
+                      {t.transaction_type}
+                    </Badge>
+                  </TD>
+                  <TD>
+                    <div className="font-medium">{t.product_id}</div>
+                    <div className="text-xs text-muted">{t.id}</div>
+                  </TD>
+                  <TD className="text-muted">{t.notes ?? "—"}</TD>
+                  <TD className="text-right font-semibold">{t.quantity}</TD>
+                </TR>
+              ))
+            ) : (
+              <TR>
+                <TD className="py-10 text-center text-muted" colSpan={4 as any}>
+                  No transactions yet.
+                </TD>
+              </TR>
+            )}
           </tbody>
-        </table>
-      </Card>
+        </Table>
+      </Panel>
     </div>
   );
 }

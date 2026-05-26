@@ -1,13 +1,15 @@
-import { Card } from "../../components/ui/Card";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Panel } from "../../components/ui/Panel";
 
 export function UsersPage() {
   return (
     <div className="space-y-4">
-      <div className="text-xl font-semibold">Users</div>
-      <Card>
-        <div className="text-sm text-slate-500 dark:text-slate-400">User management UI can be added on top of `/tenants` and user APIs.</div>
-      </Card>
+      <PageHeader title="Users" subtitle="Manage tenant users and roles" />
+      <Panel>
+        <div className="text-sm text-muted">
+          User management UI can be added on top of tenant-scoped user APIs (create/list/disable).
+        </div>
+      </Panel>
     </div>
   );
 }
-

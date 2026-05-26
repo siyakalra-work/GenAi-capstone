@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Card } from "../../components/ui/Card";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Panel } from "../../components/ui/Panel";
+import { Table, TD, TH, THead, TR } from "../../components/ui/Table";
+import { Badge } from "../../components/ui/Badge";
 
 export function ProductsListPage() {
   const [q, setQ] = useState("");
@@ -31,59 +34,90 @@ export function ProductsListPage() {
   }, [q, page]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="text-xl font-semibold">Products</div>
-        <Link to="/products/new">
-          <Button className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900">New product</Button>
-        </Link>
-      </div>
-      <Card>
-        <div className="flex gap-2 mb-3">
-          <Input placeholder="Search name/SKU" value={q} onChange={(e) => setQ(e.target.value)} />
-          <Button onClick={() => setPage(1)}>Search</Button>
-        </div>
-        {loading ? <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Loading...</div> : null}
-        <div className="overflow-auto">
-          <table className="w-full text-sm">
-            <thead className="text-left text-slate-500 dark:text-slate-400">
-              <tr>
-                <th className="py-2">SKU</th>
-                <th>Name</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {(data?.items ?? []).map((p: any) => (
-                <tr key={p.id} className="border-t border-slate-200 dark:border-slate-800">
-                  <td className="py-2">{p.sku}</td>
-                  <td>{p.product_name}</td>
-                  <td>{p.quantity}</td>
-                  <td>{p.price ?? "—"}</td>
-                  <td className="text-right">
-                    <Link className="underline" to={`/products/${p.id}/edit`}>
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex items-center justify-between mt-3">
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            Total: {data?.meta?.total ?? "—"}
-          </div>
-          <div className="flex gap-2">
-            <Button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-              Prev
+    <div className="space-y-5">
+      <PageHeader
+        title="Products"
+        subtitle="Search, filter, and manage your catalog"
+        right={
+          <Link to="/products/new">
+            <Button className="bg-slate-900 text-white dark:bg-white/10 dark:text-white border-slate-900/20 dark:border-white/10">
+              New product
             </Button>
-            <Button onClick={() => setPage((p) => p + 1)}>Next</Button>
+          </Link>
+        }
+      />
+
+      <Panel>
+        <div className="flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
+          <div className="flex gap-2 w-full md:max-w-lg">
+            <Input placeholder="Search name or SKU" value={q} onChange={(e) => setQ(e.target.value)} />
+            <Button onClick={() => setPage(1)}>Search</Button>
+          </div>
+          <div className="text-xs text-muted">
+            Total: <span className="font-semibold text-slate-900 dark:text-white">{data?.meta?.total ?? "—"}</span>
           </div>
         </div>
-      </Card>
+
+        <div className="mt-4">
+          {loading ? <div className="text-sm text-muted mb-2">Loading…</div> : null}
+          <Table>
+            <THead>
+              <tr>
+                <TH>SKU</TH>
+                <TH>Name</TH>
+                <TH>Stock</TH>
+                <TH>Price</TH>
+                <TH className="text-right">Action</TH>
+              </tr>
+            </THead>
+            <tbody>
+              {(data?.items ?? []).length ? (
+                (data?.items ?? []).map((p: any) => (
+                  <TR key={p.id}>
+                    <TD className="font-medium">{p.sku}</TD>
+                    <TD>
+                      <div className="font-medium">{p.product_name}</div>
+                      <div className="text-xs text-muted">{p.category ?? "—"} · {p.brand ?? "—"}</div>
+                    </TD>
+                    <TD>
+                      {p.quantity === 0 ? (
+                        <Badge tone="bad">Out</Badge>
+                      ) : p.quantity < 10 ? (
+                        <Badge tone="warn">Low</Badge>
+                      ) : (
+                        <Badge tone="good">Healthy</Badge>
+                      )}
+                      <span className="ml-2 font-semibold">{p.quantity}</span>
+                    </TD>
+                    <TD className="font-medium">{p.price ?? "—"}</TD>
+                    <TD className="text-right">
+                      <Link className="underline underline-offset-4 text-slate-700 dark:text-slate-200" to={`/products/${p.id}/edit`}>
+                        Edit
+                      </Link>
+                    </TD>
+                  </TR>
+                ))
+              ) : (
+                <TR>
+                  <TD className="py-10 text-center text-muted" colSpan={5 as any}>
+                    No products found.
+                  </TD>
+                </TR>
+              )}
+            </tbody>
+          </Table>
+
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-xs text-muted">Page {page}</div>
+            <div className="flex gap-2">
+              <Button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                Prev
+              </Button>
+              <Button onClick={() => setPage((p) => p + 1)}>Next</Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
     </div>
   );
 }

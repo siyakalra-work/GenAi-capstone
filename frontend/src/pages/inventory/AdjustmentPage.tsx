@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Card } from "../../components/ui/Card";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Panel } from "../../components/ui/Panel";
 
 export function AdjustmentPage() {
   const navigate = useNavigate();
@@ -28,8 +29,8 @@ export function AdjustmentPage() {
 
   return (
     <div className="space-y-4">
-      <div className="text-xl font-semibold">Adjustment</div>
-      <Card>
+      <PageHeader title="Adjustment" subtitle="Manually correct on-hand stock for a product" />
+      <Panel>
         <form
           className="space-y-3"
           onSubmit={(e) => {
@@ -43,7 +44,10 @@ export function AdjustmentPage() {
               .finally(() => setLoading(false));
           }}
         >
-          <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value={productId} onChange={(e) => setProductId(e.target.value)}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="md:col-span-2">
+              <div className="text-xs text-muted mb-1">Product</div>
+              <select className="w-full rounded-xl border border-slate-200/70 dark:border-slate-800/60 bg-white/70 dark:bg-white/5 px-3 py-2 text-sm backdrop-blur" value={productId} onChange={(e) => setProductId(e.target.value)}>
             <option value="">Select product</option>
             {products.map((p: any) => (
               <option key={p.id} value={p.id}>
@@ -51,14 +55,27 @@ export function AdjustmentPage() {
               </option>
             ))}
           </select>
-          <Input type="number" value={String(newQuantity)} onChange={(e) => setNewQuantity(Number(e.target.value))} />
-          <Input placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+            </div>
+            <div>
+              <div className="text-xs text-muted mb-1">New quantity</div>
+              <Input type="number" value={String(newQuantity)} onChange={(e) => setNewQuantity(Number(e.target.value))} />
+            </div>
+            <div>
+              <div className="text-xs text-muted mb-1">Notes</div>
+              <Input placeholder="Reason / notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+            </div>
+          </div>
           {error ? <div className="text-sm text-red-500">{error}</div> : null}
-          <Button type="submit" className="bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900" disabled={loading || !productId}>
-            {loading ? "Saving..." : "Submit"}
-          </Button>
+          <div className="flex gap-2">
+            <Button type="button" onClick={() => navigate("/inventory/transactions")}>
+              Cancel
+            </Button>
+            <Button type="submit" className="bg-slate-900 text-white dark:bg-white/10 dark:text-white border-slate-900/20 dark:border-white/10" disabled={loading || !productId}>
+              {loading ? "Saving..." : "Submit"}
+            </Button>
+          </div>
         </form>
-      </Card>
+      </Panel>
     </div>
   );
 }
